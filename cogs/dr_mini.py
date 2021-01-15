@@ -16,11 +16,11 @@ class dragon_game(commands.Cog):
 
   def hp_display(self,hp1,hp2,tot1,tot2):
     #val range between 1 to 19
-    val1=hp_calc(hp1,tot1)
-    val2=hp_calc(hp2,tot2)
+    val1=self.hp_calc(hp1,tot1)
+    val2=self.hp_calc(hp2,tot2)
     if val1==0:
         val1+=1
-    val2=hp_calc(hp2,tot2)
+    val2=self.hp_calc(hp2,tot2)
     if val2==0:
         val2+=1
 
@@ -33,7 +33,7 @@ class dragon_game(commands.Cog):
     x2= x2_org + int((val2)-1)*12
     color2=(235,52,52)
     diam=12
-    img=Image.open('progress.png').convert('RGB')
+    img=Image.open('/path to file /progress.png').convert('RGB')
     draw=ImageDraw.Draw(img)
     #drawing 1st hp
     draw.ellipse([x1,y1,x1+diam,y1+diam], fill=color1)
@@ -45,15 +45,15 @@ class dragon_game(commands.Cog):
     ImageDraw.floodfill(img, xy=(369,293), value=color2, thresh=40)
     text2=f" HP : {hp2}/ {tot2}"
     draw.text((406,293), text2,fill ="black")
-    img.save('result.png')
+    img.save('/path to file /result.png')
 
   async def create_embed(self,ctx,nam,hp1,hp2,tot1,tot2):
       cvalue = random.randint(0, 0xffffff)
       embed = discord.Embed(title=f" Dragon Kunj vs {nam} ", description="",color=cvalue)
       #embed.set_thumbnail(url=message.author.avatar_url)
       embed.add_field(name="Dragon Kunj  ", value=f"HP : {hp1} / {tot1} ", inline=True)
-      hp_display(hp1,hp2,tot1,tot2)
-      file= discord.File("result.png")
+      self.hp_display(hp1,hp2,tot1,tot2)
+      file= discord.File("/path to file /result.png")
       embed.set_image(url="attachment://result.png")
       embed.add_field(name=f"{nam} ",value=f"HP:{hp2} / {tot2} ", inline=True)
       await ctx.send(file=file,embed=embed)
@@ -131,8 +131,8 @@ class dragon_game(commands.Cog):
           self.tot_hp=1000*3+100*self.lv
           self.hp=self.tot_hp
           self.attack={
-                        "a1": {"a_name":"thee thuppi","damage":450,"accuracy":90 ,"mov_no":20},
-                        "a2":{"a_name":"flame_disc0","damage":1150,"accuracy":65,"mov_no":5},
+                        "a1": {"a_name":"Thee thuppi","damage":450,"accuracy":90 ,"mov_no":20},
+                        "a2":{"a_name":"Flame_disc0","damage":1150,"accuracy":65,"mov_no":5},
                         "a3":{"a_name":"Dragon_dinner","damage":800,"accuracy":85,"mov_no":10}
                       }
  
@@ -142,7 +142,7 @@ class dragon_game(commands.Cog):
             def check_content(message):
               if message.author!=author or message.channel!=channel:
                 return False
-              if not (message.content==1 or message.content==2 or message.content==3):
+              if not(message.content=='1' or message.content=='2' or message.content=='3'):
                 return False
               return True
             return check_content
@@ -151,14 +151,13 @@ class dragon_game(commands.Cog):
           await ctx.send("what do u wish to do? ")  
           await ctx.send("1>fight 2>flee 3>fleee ")        
           try:
-            msg = await self.bot.wait_for('message',timeout=60)
+            msg = await self.bot.wait_for('message',check=check(ctx.author,ctx.channel),timeout=60)
           except Exception as err:
              await ctx.send("invalid input ") 
-             return
-             print("err")    
-          x=msg.content
-          if x==1:
-              print("begin fight")
+             return                 
+          x=msg.content          
+          x=int(x)
+          if x==1:             
               flag=0
               init=0
               a_hp=dragon.hp
@@ -179,25 +178,28 @@ class dragon_game(commands.Cog):
                    mv+=1
                    init+=1
                    await ctx.send("select your move ")
-                   dis=user.display_attack()
-                   await ctx.send(dis)
+                   await user.display_attack(ctx)                   
                    await ctx.send("enter the attack no: ")                  
                    try:
-                       x = await self.bot.wait_for('message',check=check(ctx.author,ctx.channel),timeout=60)
+                       msg = await self.bot.wait_for('message',check=check(ctx.author,ctx.channel),timeout=60)
                    except:                   
                        await ctx.send("invalid choice ")
                        await ctx.send("exiting..")
-                       return                     
-                   y="a"+str(x)
+                       return  
+                   
+                   x=msg.content                                   
+                   y="a"+ x
+
                    att=user.attack[y]
                    while self.mov_check(att)==0:
                      await ctx.send("the number of available move is zero .please select another move..")
                      try:
-                       x = await self.bot.wait_for('message',check=check(ctx.author,ctx.channel),timeout=60)
+                       msg = await self.bot.wait_for('message',check=check(ctx.author,ctx.channel),timeout=60)
                      except:                   
                        await ctx.send("invalid choice ")     
-                     
-                   y="a"+str(x)
+
+                   x=msg.content                     
+                   y="a"+ x
                    att=user.attack[y]
                    acc=att["accuracy"]
                    aname=att["a_name"]
@@ -232,14 +234,14 @@ class dragon_game(commands.Cog):
                      x=random.randint(1,3)
                      a_nam="a"+str(x)
                      att=dragon.attack[a_nam]
-                     while mov_check(att)==0:
+                     while self.mov_check(att)==0:
                        x=random.randint(1,3)
                        a_nam="a"+str(x)
                      acc=att["accuracy"]
                      aname=att["a_name"]
                      dragon.attack[a_nam]["mov_no"]-=1
                      await ctx.send(f" Dragon kunj used {aname} ")
-                     hit=attack_acc(acc)
+                     hit=self.attack_acc(acc)
                      if hit==1:
                          dmg=att["damage"]
                          user.hp-=dmg
@@ -264,15 +266,20 @@ class dragon_game(commands.Cog):
                    await self.hp_disp(ctx,a_hp,b_hp,atot,btot,b_name)
                    init=0
               if dragon.hp<=0:
+                  disp="-"*30+" [ GAME OVER ] "+"-"*30
+                  await ctx.send(disp)
                   mess=f"""----------------------------------
                        dragon kunj fainted..
                        {user.name} defeated dragon kunju
                    """
                   await ctx.send(mess)
               elif user.hp<=0:
+                 disp="-"*30+" [ GAME OVER ] "+"-"*30
+                 await ctx.send(disp)
                  await ctx.send(f"Dragon kunj defeated {user.name}")
           elif x==2 or x==3 or x==4 :
               await ctx.send(f"{user.name} fled...")
+              return
   
   @commands.command(name='dr')
   async def drag_mini(self,ctx):
