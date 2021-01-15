@@ -6,8 +6,8 @@ class ytseach(commands.Cog):
         self.bot=bot
     @commands.command()
     async def yts(self,ctx,arg1,arg2):
-        arg1=keyword        
-        arg2=nor 
+        keyword=arg1        
+        nor=int(arg2) 
         if nor>5:
             nor=5
         query = urllib.parse.urlencode({'search_query':keyword})        
@@ -17,11 +17,11 @@ class ytseach(commands.Cog):
             await ctx.send('http://www.youtube.com/watch?v=' + search_results[1])
             return
         for i in range(int(nor)):
-            url_keys='http://www.youtube.com/watch?v=' + search_results[i]
-            print(url_keys)
+            url_keys='http://www.youtube.com/watch?v=' + search_results[i]            
             await ctx.send(url_keys)       
     @yts.error
-    async def usage(self,ctx):
-        ctx.send("usage : !yts keyword no_of_results(max:5)")
+    async def usage(self,ctx,error):
+        await ctx.send("usage : !yts    keyword      no_of_results(max:5)")
+        await ctx.send(f"[error]: {error}")
 def setup(bot):
     bot.add_cog(ytseach(bot))        

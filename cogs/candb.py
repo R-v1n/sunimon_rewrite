@@ -15,9 +15,9 @@ class cows_and_bulls(commands.Cog):
                flag=1
             else :
                flag=0
-            num=num+x
-            flag=1
-            snum=num
+          num=num+x
+          flag=1
+          snum=num
        return snum
 
 
@@ -56,9 +56,9 @@ class cows_and_bulls(commands.Cog):
 
        
 
-    @commands.command()
-    async def candb(self,ctx):
-        num1=self.assign_no()
+    @commands.command(name="candb")
+    async def candb_main(self,ctx):               
+        num1=self.assign_no()        
         author=ctx.author
         channel=ctx.channel
         def check(author,channel):
@@ -67,18 +67,18 @@ class cows_and_bulls(commands.Cog):
                   return False
                 else:
                   return True
-            return check_content    
-        await channel.send('please enter the number of tries .maximum:6')
-        msg = await self.bot.wait_for('message',check=check,timeout=60)
+            return check_content                
+        await ctx.send('please enter the number of tries .maximum:6')
+        msg = await self.bot.wait_for('message',check=check(author,channel),timeout=60)
         x=msg.content
         if not int(x) or int(x)>6:
-            await channel.send("usage : enter a number less than 6 ")
+            await ctx.send("usage : enter a number less than 6 ")
             return  
         for i in range(int(msg.content)):
-                await channel.send('enter a non 0 and non repeating 4 dgit number (timeout : 90 sec).. command /sur to surrender')
+                await ctx.send('enter a non 0 and non repeating 4 dgit number (timeout : 90 sec).. command /sur to surrender')
                 y="/sur"
                 surrender=0
-                msg = await self.bot.wait_for('message',check=check,timeout=90)
+                msg = await self.bot.wait_for('message',check=check(author,channel),timeout=90)
                 if not msg.content.lower().startswith(y):
                     num2=msg.content
                     flag=1
@@ -95,7 +95,7 @@ class cows_and_bulls(commands.Cog):
                           res="you didn't enter 4 digit number ..neeyokee jeevichittu karyam onnum illa.. \n enter a 4 digit number or /sur to surrender"
                        if flag==1:
                         await channel.send(res)
-                        msg = await self.bot.wait_for('message',check=check,timeout=60)
+                        msg = await self.bot.wait_for('message',check=check(author,channel),timeout=60)
                         if not msg.content.lower().startswith(y):
                             num2=msg.content
                         else :
@@ -106,16 +106,16 @@ class cows_and_bulls(commands.Cog):
                       bull=cb[0]
                       cow=cb[1]
                       if bull==4:
-                           await channel.send(f"mwonee nee jayichh..ithuthanneyanu number  {num1}")
+                           await ctx.send(f"mwonee nee jayichh..ithuthanneyanu number  {num1}")
                            return
-                      await channel.send(f"its {bull} b and {cow} c")
+                      await ctx.send(f"its {bull} b and {cow} c")
                     else :
-                        await channel.send("thoottu pinmari alle..seD  :-( ")
+                        await ctx.send("thoottu pinmari alle..seD  :-( ")
                         return
         else:
-         await channel.send("thoottu pinmari alle..V3rY_s3D. ;{ ")
+         await ctx.send("thoottu pinmari alle..V3rY_s3D. ;{ ")
          return
-        await channel.send(f"s0rry.. {user}  ...Nee thottu. ente number  {num1}")
+        await ctx.send(f"s0rry.. {ctx.author.name}  ...Nee thottu. ente number  {num1}")
         return 
 
 def setup(bot):

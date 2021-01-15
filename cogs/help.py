@@ -13,7 +13,7 @@ class help_cmd(commands.Cog):
         embed.add_field(name="!cflip",value="coin flip", inline=False)
         embed.add_field(name="!candb",value="play cows and bulls", inline=False)
         embed.add_field(name="!dr",value="Dragon Kunj mini game", inline=False)
-        embed.add_field(name="!yts {search term }",value="search yt vid", inline=False)
+        embed.add_field(name="!yts {search term } {no of results}",value="search yt vid", inline=False)
         await ctx.send(embed=embed)
 
     @commands.Cog.listener()    
@@ -24,7 +24,7 @@ class help_cmd(commands.Cog):
 
     async def on_member_join(self,member):       
         channel=member.guild.system_channel
-        await channel.send("welcome {member}..Nyan sunim0n")
+        await channel.send("welcome to GEC IT discord server..Nyan sunim0n")
 
 
 def setup(bot):
