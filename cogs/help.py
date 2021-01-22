@@ -19,12 +19,14 @@ class help_cmd(commands.Cog):
     @commands.Cog.listener()    
     async def on_ready(self):
          print(f'Logged in as ::>> {self.bot.user.name} ')
+         #set bot status
+         await self.bot.change_presence(activity=discord.game('!!help'))
 
     @commands.Cog.listener()    
 
     async def on_member_join(self,member):       
         channel=member.guild.system_channel
-        await channel.send("welcome to GEC IT discord server..Nyan sunim0n")
+        await channel.send("welcome our discord server..Nyan sunim0n")
 
 
 def setup(bot):
