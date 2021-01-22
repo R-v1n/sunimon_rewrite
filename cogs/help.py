@@ -20,7 +20,7 @@ class help_cmd(commands.Cog):
     async def on_ready(self):
          print(f'Logged in as ::>> {self.bot.user.name} ')
          #set bot status
-         await self.bot.change_presence(activity=discord.game('!!help'))
+         await self.bot.change_presence(activity=discord.Game('!!help'))
 
     @commands.Cog.listener()    
 
